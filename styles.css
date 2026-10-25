@@ -172,3 +172,7 @@ dialog.gallery-modal{position:fixed;inset:0;margin:0;padding:0;width:100vw;heigh
 
 /* Keep the original WORK wordmark as the overlay trigger. */
 .site-header nav .work-toggle{width:auto;height:auto;display:block;font:inherit;letter-spacing:inherit;line-height:inherit;padding:0;text-align:right;text-transform:uppercase}
+
+/* Four menu rows fit within the fixed desktop composition. */
+.overlay-menu-content{top:20%}
+.work-overlay .overlay-category{height:116px}

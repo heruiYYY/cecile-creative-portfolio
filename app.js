@@ -18,7 +18,7 @@
     workMenu.hidden=!open;root.inert=open;document.querySelector('.brand').inert=open;document.body.classList.toggle('work-menu-open',open);
     if(open)workMenu.querySelector('.category-button')?.focus();else if(workMenu.contains(document.activeElement))workTrigger.focus();
   }
-  const homeCategories = [{id:'ip',label:'IP Design',matches:p=>p.tags.includes('character')},{id:'video',label:'Video Design',matches:p=>p.videos.length>0},{id:'poster',label:'Poster Design',matches:p=>['planet','vesper','identity'].includes(p.id)}];
+  const homeCategories = [{id:'all',label:'All',matches:()=>true},{id:'ip',label:'IP Design',matches:p=>p.tags.includes('character')},{id:'video',label:'Video Design',matches:p=>p.videos.length>0},{id:'poster',label:'Poster Design',matches:p=>['planet','vesper','identity'].includes(p.id)}];
   workMenu.innerHTML=`<div class="overlay-menu-content"><p class="overlay-menu-eyebrow">SELECTED WORK</p><div class="overlay-menu-rows">${homeCategories.map(c=>{const count=projects.filter(c.matches).length;return `<button type="button" class="category-button overlay-category" data-category="${c.id}" aria-pressed="false" aria-label="${c.label}, ${count} 个作品"><span class="category-label">${c.label}</span><span class="category-count"><span class="count-value">${String(count).padStart(2,'0')}</span><span>projects</span></span></button>`;}).join('')}</div></div>`;
   const remembered = {home:new Map(),work:new Map(),homeMobile:new Map(),workMobile:new Map()};
   const layout = {
@@ -189,7 +189,7 @@
         s.x=pos[0]/100*bounds.width;s.y=pos[1]/100*bounds.height;s.r=pos[2];paint(s);
         if(animate&&!reduceMotion.matches)s.reflowAnimation=s.el.animate([from,{left:s.el.style.left,top:s.el.style.top}],{duration:520,easing:'cubic-bezier(.2,.75,.2,1)'});
       });
-      workMenu.querySelectorAll('.category-button').forEach(b=>b.setAttribute('aria-pressed',String(!!category&&b.dataset.category===homeFilter)));
+      workMenu.querySelectorAll('.category-button').forEach(b=>b.setAttribute('aria-pressed',String(category?b.dataset.category===homeFilter:b.dataset.category==='all')));
       const count=cards.filter(card=>!card.hidden).length;
       announce(`${category?category.label:'All projects'}，${count} 个作品。${category?'再次点击当前分类显示全部。':''}`);
     }
@@ -404,7 +404,7 @@
     if(event.key==='ArrowDown'){event.preventDefault();event.stopPropagation();setWorkMenu(true);}
   });
   workMenu.querySelectorAll('.category-button').forEach(button=>button.addEventListener('click',()=>{
-    homeFilter=homeFilter===button.dataset.category?null:button.dataset.category;setWorkMenu(false);
+    homeFilter=button.dataset.category==='all'||homeFilter===button.dataset.category?null:button.dataset.category;setWorkMenu(false);
     if(location.hash==='#work')applySceneCategory?.();else location.hash='work';workTrigger.focus();
   }));
   workMenu.addEventListener('click',event=>{if(event.target===workMenu)setWorkMenu(false);});
