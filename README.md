@@ -1,19 +1,8 @@
-# Designer Cecile — Creative Portfolio
+# Cecile Creative Portfolio
 
-Complete static portfolio, ready for GitHub Pages. Includes the latest WORK dropdown, project filters, draggable polaroids, project galleries, About page, fonts, images, and videos.
+- [方案一：玻璃质感与拍立得](https://heruiyyy.github.io/cecile-creative-portfolio/scheme-1/)
+- [方案二：Portfolio 编辑式作品墙](https://heruiyyy.github.io/cecile-creative-portfolio/scheme-2/)
 
-## Preview locally
+网站主入口默认进入方案二。两个方案共享 assets 媒体文件，保留各自的样式与交互。
 
-```sh
-python3 -m http.server 4177
-```
-
-Open `http://localhost:4177/`. The desktop composition scales to the browser window. Mobile phones display the desktop-viewing guide.
-
-## GitHub Pages
-
-Publish the `main` branch at `/ (root)` in Settings → Pages. `.nojekyll` serves all assets directly. Paths are relative so the site supports repository subdirectories.
-
-## Update
-
-Edit the static HTML/CSS/JavaScript or assets, commit, and push to `main`.
+GitHub Pages 从 main 分支根目录发布。
