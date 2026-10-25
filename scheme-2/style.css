@@ -67,3 +67,10 @@
 .work-wall.is-filtered .artboard{top:75px;bottom:90px;grid-auto-rows:240px}.work-wall.is-filtered{height:1000px}
 @keyframes work-dropdown-open{from{opacity:0;translate:0 -6px}to{opacity:1;translate:0 0}}
 @media(max-width:750px){.work-dropdown{top:calc(100% + 23px);width:250px;padding:16px}.work-dropdown button{font-size:13px;min-height:50px}.work-wall.is-filtered{height:900px}.work-wall.is-filtered .artboard{top:65px;grid-auto-rows:220px}}
+
+/* White menu surface and active WORK pill. */
+.work-trigger{padding:8px 12px;margin:-8px -12px;border-radius:7px;transition:background .18s,color .18s}
+.work-trigger[aria-expanded="true"]{background:#151515;color:#fff}
+.work-trigger[aria-expanded="true"] sup{color:#d9d9d9}
+.work-dropdown{background:#fff;box-shadow:0 8px 36px #1c222014,0 2px 10px #1c222008}
+.work-dropdown button span{color:#fff}
