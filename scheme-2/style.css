@@ -48,11 +48,3 @@
 .art-card:hover{box-shadow:none}.art-card:after{display:none}
 .art-caption{top:100%;bottom:auto;left:0;right:0;padding-top:8px;color:#242424}
 .art-caption span{color:#777}
-/* Bounded gallery slots keep every frame intact and give the wall even breathing room. */
-.work-wall{height:auto}
-.artboard{position:relative;inset:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(220px,20vw,310px);gap:clamp(30px,3vw,52px);align-items:center;justify-items:center;padding:76px clamp(24px,3.5vw,64px) 84px}
-.artboard .art-card:nth-child(n){position:relative;inset:auto;width:100%;height:100%;margin:0;display:block;border-radius:0;background:transparent;overflow:visible}
-.artboard .art-card:nth-child(2),.artboard .art-card:nth-child(5),.artboard .art-card:nth-child(10){width:80%;height:80%}
-.artboard .art-card:nth-child(9){grid-column:2}.artboard .art-card:nth-child(10){grid-column:3}
-.artboard .art-card img{object-fit:contain;transform:none;border-radius:0}
-@media(max-width:750px){.artboard{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:220px;gap:28px 22px;padding:64px 20px 74px}.artboard .art-card:nth-child(9),.artboard .art-card:nth-child(10){grid-column:auto}.artboard .art-card:nth-child(2),.artboard .art-card:nth-child(5),.artboard .art-card:nth-child(10){width:90%;height:90%}}
