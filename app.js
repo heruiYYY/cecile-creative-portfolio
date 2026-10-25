@@ -11,8 +11,15 @@
   let activeProject = null, activeIndex = 0, previousScene = 'home', cleanup = () => {}, currentMedia = [], gallery = null;
   let homeFilter = null, workMenuOpen = false;
   const workTrigger=document.querySelector('#nav-work');
-  function setWorkMenu(open){workMenuOpen=open;workTrigger.setAttribute('aria-expanded',String(open));const menu=document.querySelector('#work-category-menu');if(menu)menu.hidden=!open;}
+  const workMenu=document.querySelector('#work-category-menu');
+  let applySceneCategory=null;
+  function setWorkMenu(open){
+    workMenuOpen=open;workTrigger.setAttribute('aria-expanded',String(open));workTrigger.setAttribute('aria-label',open?'关闭作品分类':'打开作品分类');
+    workMenu.hidden=!open;root.inert=open;document.querySelector('.brand').inert=open;document.body.classList.toggle('work-menu-open',open);
+    if(open)workMenu.querySelector('.category-button')?.focus();else if(workMenu.contains(document.activeElement))workTrigger.focus();
+  }
   const homeCategories = [{id:'ip',label:'IP Design',matches:p=>p.tags.includes('character')},{id:'video',label:'Video Design',matches:p=>p.videos.length>0},{id:'poster',label:'Poster Design',matches:p=>['planet','vesper','identity'].includes(p.id)}];
+  workMenu.innerHTML=`<div class="overlay-menu-content"><p class="overlay-menu-eyebrow">SELECTED WORK</p><div class="overlay-menu-rows">${homeCategories.map(c=>{const count=projects.filter(c.matches).length;return `<button type="button" class="category-button overlay-category" data-category="${c.id}" aria-pressed="false" aria-label="${c.label}, ${count} 个作品"><span class="category-label">${c.label}</span><span class="category-count"><span class="count-value">${String(count).padStart(2,'0')}</span><span>projects</span></span></button>`;}).join('')}</div></div>`;
   const remembered = {home:new Map(),work:new Map(),homeMobile:new Map(),workMobile:new Map()};
   const layout = {
     home:[[38,27,7],[16,31,-8],[65,28,-5],[23,53,7],[47,53,-6],[73,66,8],[59,51,4]],
@@ -43,7 +50,7 @@
   function paperHTML(p,index){return `<a class="polaroid" href="#project/${p.id}" data-project="${p.id}" aria-label="Open project: ${esc(p.en)} — ${esc(p.title)}" style="--delay:${index*.065}s"><span class="picture"><img src="${p.coverThumb}" alt="${esc(p.title)}" draggable="false" width="400" height="400"></span><span class="paper-name">${esc(paperTitle(p.en))}</span></a>`;}
   function renderScene(mode){
     const work=mode==='work';previousScene=mode;
-    root.innerHTML=`<section class="home-scene ${work?'work-scene':''}" aria-label="${work?'All projects':'Creative Portfolio'}"><div class="scene-cards" id="home-project-cards">${projects.map(paperHTML).join('')}</div>${titleSVG()}<div class="specialties" id="work-category-menu" role="group" aria-label="作品分类" ${workMenuOpen?'':'hidden'}>${homeCategories.map(c=>`<button type="button" class="category-button" data-category="${c.id}" aria-pressed="false" aria-controls="home-project-cards">${c.label}</button>`).join('')}</div><span class="scene-hint">CLICK TO OPEN · HOLD TO DRAG</span></section>`;
+    root.innerHTML=`<section class="home-scene ${work?'work-scene':''}" aria-label="${work?'All projects':'Creative Portfolio'}"><div class="scene-cards" id="home-project-cards">${projects.map(paperHTML).join('')}</div>${titleSVG()}<span class="scene-hint">CLICK TO OPEN · HOLD TO DRAG</span></section>`;
     const scene=root.querySelector('.scene-cards'), cards=[...scene.querySelectorAll('.polaroid')];
     let state=[],frame=0,drag=null,pending=null,holdTimer=0,z=10,disposed=false,ignoreClickUntil=0,lastTick=0,windPointer=null;
     const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
@@ -182,11 +189,11 @@
         s.x=pos[0]/100*bounds.width;s.y=pos[1]/100*bounds.height;s.r=pos[2];paint(s);
         if(animate&&!reduceMotion.matches)s.reflowAnimation=s.el.animate([from,{left:s.el.style.left,top:s.el.style.top}],{duration:520,easing:'cubic-bezier(.2,.75,.2,1)'});
       });
-      root.querySelectorAll('.category-button').forEach(b=>b.setAttribute('aria-pressed',String(!!category&&b.dataset.category===homeFilter)));
+      workMenu.querySelectorAll('.category-button').forEach(b=>b.setAttribute('aria-pressed',String(!!category&&b.dataset.category===homeFilter)));
       const count=cards.filter(card=>!card.hidden).length;
       announce(`${category?category.label:'All projects'}，${count} 个作品。${category?'再次点击当前分类显示全部。':''}`);
     }
-    root.querySelectorAll('.category-button').forEach(button=>button.addEventListener('click',()=>{homeFilter=homeFilter===button.dataset.category?null:button.dataset.category;setWorkMenu(false);if(location.hash==='#work')applyCategory();else location.hash='work';workTrigger.focus();}));
+    applySceneCategory=applyCategory;
     position();applyCategory(false);cleanup=()=>{state.forEach(s=>s.reflowAnimation?.cancel());disposed=true;clearTimeout(holdTimer);cancelAnimationFrame(frame);pending=drag=null;window.removeEventListener('resize',onResize);window.removeEventListener('pointermove',onWind);};
   }
   function renderProject(p){
@@ -381,7 +388,7 @@
     }));
   }
   function renderRoute(){
-    setWorkMenu(false);
+    setWorkMenu(false);applySceneCategory=null;
     cleanup();cleanup=()=>{};pauseMedia();if(dialog.open)dialog.close();activeProject=null;currentMedia=[];
     const hash=decodeURIComponent(location.hash.slice(1)||'home'),p=hash.startsWith('project/')?projects.find(p=>p.id===hash.slice(8)):null;
     const mode=p?'project':hash==='about'?'about':hash==='work'?'work':'home';
@@ -394,13 +401,19 @@
   }
   workTrigger.addEventListener('click',()=>setWorkMenu(!workMenuOpen));
   workTrigger.addEventListener('keydown',event=>{
-    if(event.key==='ArrowDown'){event.preventDefault();setWorkMenu(true);root.querySelector('.category-button')?.focus();}
+    if(event.key==='ArrowDown'){event.preventDefault();event.stopPropagation();setWorkMenu(true);}
   });
-  document.addEventListener('pointerdown',event=>{
-    if(workMenuOpen&&!event.target.closest('#nav-work,.specialties'))setWorkMenu(false);
-  });
+  workMenu.querySelectorAll('.category-button').forEach(button=>button.addEventListener('click',()=>{
+    homeFilter=homeFilter===button.dataset.category?null:button.dataset.category;setWorkMenu(false);
+    if(location.hash==='#work')applySceneCategory?.();else location.hash='work';workTrigger.focus();
+  }));
+  workMenu.addEventListener('click',event=>{if(event.target===workMenu)setWorkMenu(false);});
   document.addEventListener('keydown',event=>{
-    if(workMenuOpen&&event.key==='Escape'){event.preventDefault();setWorkMenu(false);workTrigger.focus();}
+    if(!workMenuOpen)return;
+    const items=[workTrigger,...workMenu.querySelectorAll('.category-button')];
+    if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();setWorkMenu(false);workTrigger.focus();}
+    else if(event.key==='Tab'){event.preventDefault();const index=items.indexOf(document.activeElement);items[(index+(event.shiftKey?-1:1)+items.length)%items.length].focus();}
+    else if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();const rows=items.slice(1),index=rows.indexOf(document.activeElement);rows[(index+(event.key==='ArrowDown'?1:-1)+rows.length)%rows.length].focus();}
   });
   closeProject.onclick=()=>{location.hash=previousScene;};
   window.addEventListener('hashchange',renderRoute);
