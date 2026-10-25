@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#171a1e">
+  <meta name="description" content="Designer Cecile — Creative Portfolio。请使用电脑浏览器欣赏完整作品与交互。">
+  <title>Designer Cecile — Creative Portfolio</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="canvas.css?v=fixed-canvas-2">
+  <script src="canvas.js?v=github-pages-20261024" defer></script>
+</head>
+<body>
+  <iframe id="portfolio-canvas" title="Designer Cecile 创意作品集" hidden></iframe>
+  <main id="computer-guide" hidden>
+    <div class="guide-brand">DESIGNER<br>CECILE</div>
+    <section class="guide-copy">
+      <svg class="computer-icon" viewBox="0 0 96 80" fill="none" aria-hidden="true"><rect x="8" y="8" width="80" height="50" rx="4"/><path d="M8 48h80M48 58v14M30 73h36"/></svg>
+      <p class="guide-eyebrow">CREATIVE PORTFOLIO</p>
+      <h1>请使用电脑浏览</h1>
+      <p>为了完整呈现作品和交互体验，<br>请在电脑浏览器中打开本作品集。</p>
+      <label for="computer-link">电脑访问链接</label>
+      <input id="computer-link" readonly aria-label="作品集电脑访问链接">
+      <button id="copy-computer-link" type="button">复制网站链接</button>
+      <span id="copy-status" role="status" aria-live="polite"></span>
+    </section>
+  </main>
+  <noscript><p class="no-script">Designer Cecile — 请使用电脑浏览器并开启 JavaScript 查看作品集。</p></noscript>
+</body>
+</html>

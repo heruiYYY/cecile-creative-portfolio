@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#a6a9ad">
+  <meta name="description" content="Designer Cecile — 角色、世界观与动态影像。探索七个视觉创作项目。">
+  <title>Designer Cecile — Creative Portfolio</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/LEMONMILK-Medium.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="assets/fonts/Caveat.ttf" as="font" crossorigin>
+  <link rel="stylesheet" href="styles.css?v=work-dropdown-20261023">
+  <script src="projects.js?v=all-media-edges-2" defer></script>
+  <script src="app.js?v=work-dropdown-20261023" defer></script>
+  <script src="frame-bridge.js?v=fixed-canvas-1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to portfolio</a>
+  <div class="tray" aria-hidden="true"></div>
+  <svg class="filter-defs" aria-hidden="true"><defs>
+    <filter id="pressed" x="-10%" y="-15%" width="120%" height="140%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="blur"/>
+      <feOffset in="blur" dx="0" dy="2.8" result="down"/>
+      <feComposite in="SourceAlpha" in2="down" operator="out" result="top"/>
+      <feFlood flood-color="#10151b" flood-opacity=".92"/><feComposite in2="top" operator="in" result="shadow"/>
+      <feOffset in="blur" dx="0" dy="-1.5" result="up"/>
+      <feComposite in="SourceAlpha" in2="up" operator="out" result="bottom"/>
+      <feFlood flood-color="#ffffff" flood-opacity=".95"/><feComposite in2="bottom" operator="in" result="shine"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="shadow"/><feMergeNode in="shine"/></feMerge>
+    </filter>
+  </defs></svg>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Designer Cecile, home"><span>DESIGNER</span><span>CECILE</span></a>
+    <nav aria-label="Primary"><button type="button" id="nav-work" class="work-toggle" aria-expanded="false" aria-controls="work-category-menu">Work</button><a href="#about" id="nav-about">About</a></nav>
+    <button class="close-project" hidden aria-label="Close project and return to work">×</button>
+  </header>
+  <main id="content" tabindex="-1"></main>
+  <div class="transition-wash" aria-hidden="true"></div>
+  <dialog id="media-dialog" aria-label="Project media"><button class="dialog-close" aria-label="Close media">×</button><div class="dialog-content"></div></dialog>
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <noscript><div class="no-script">Designer Cecile — Creative Portfolio<br>请开启 JavaScript 浏览项目。</div></noscript>
+</body>
+</html>
