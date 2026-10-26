@@ -74,3 +74,8 @@
 .work-trigger[aria-expanded="true"] sup{color:#d9d9d9}
 .work-dropdown{background:#fff;box-shadow:0 8px 36px #1c222014,0 2px 10px #1c222008}
 .work-dropdown button span{color:#fff}
+
+/* Keep navigation and its dropdown visible above scrolling page content. */
+.site-nav{position:sticky;top:0;z-index:1000;background:#fff;isolation:isolate}
+html{scroll-padding-top:84px}
+@media(max-width:750px){html{scroll-padding-top:74px}}
