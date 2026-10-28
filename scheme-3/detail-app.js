@@ -206,7 +206,7 @@
     selectMedia(0);
   }
   function createGallery(stage){
-    const gap=()=>phone()?18:28,slides=[],centers=[];let widths=[],period=0,offset=0,target=null,frame=0,lastFrame=0,held=null,ignoreUntil=0,disposed=false,paused=reduceMotion.matches,holdTimer=0,expanded=false,returnState=null,momentum=0;
+    const gap=()=>phone()?18:28,slides=[],centers=[];let widths=[],period=0,offset=0,target=null,frame=0,lastFrame=0,held=null,ignoreUntil=0,disposed=false,paused=reduceMotion.matches,expanded=false,returnState=null,momentum=0;
     const playButton=root.querySelector('.gallery-play'),countElement=root.querySelector('.media-count'),controls=root.querySelector('.stage-controls');
     const wrap=x=>((x+period/2)%period+period)%period-period/2;
     currentMedia.forEach((m,i)=>{
@@ -217,7 +217,7 @@
       else{media.alt=m.label;media.src=m.thumb||m.src;media.loading='lazy';media.decoding='async';}
       slide.append(media);
       if(m.type==='video'){const mark=document.createElement('span');mark.className='card-video-mark';mark.textContent='▶';mark.setAttribute('aria-hidden','true');slide.append(mark);}
-      const open=e=>{if(performance.now()<ignoreUntil||held?.moved){e?.preventDefault();return;}if(e?.target?.closest('video[controls]'))return;activeIndex=i;updateCount();openFull();};
+      const open=e=>{if(e?.type==='click'&&e.detail!==0&&(performance.now()<ignoreUntil||held?.moved)){e?.preventDefault();return;}if(e?.target?.closest('video[controls]'))return;activeIndex=i;updateCount();openFull();};
       slide.onclick=open;slide.onkeydown=e=>{if(e.target!==slide)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}};
       slide.style.opacity='0';stage.append(slide);slides.push({el:slide,media,item:m,visible:null,shouldPlay:null});
     });
@@ -272,7 +272,7 @@
           const decay=Math.exp(-elapsed/150);offset+=momentum*150*(1-decay);momentum*=decay;moving=true;
         }else momentum=0;
       }
-      const running=!expanded&&!held?.dragging&&!paused&&!reduceMotion.matches&&!document.hidden;
+      const running=!expanded&&!held&&!paused&&!reduceMotion.matches&&!document.hidden;
       if(running){const shift=.22*dt;offset-=shift;if(target!==null)target-=shift;}
       draw();frame=(moving||running)&&!disposed?requestAnimationFrame(animate):0;if(!frame)lastFrame=0;
     }
@@ -280,22 +280,21 @@
     function go(index){momentum=0;index=(index+slides.length)%slides.length;target=offset+wrap(centers[index]-offset);if(reduceMotion.matches){offset=target;target=null;draw();}else start();activeIndex=index;updateCount();announce(currentMedia[index].label);}
     function beginDrag(){
       if(!held||held.dragging||disposed)return;
-      clearTimeout(holdTimer);held.dragging=true;held.origin=offset;held.desired=offset;target=null;momentum=0;
+      held.dragging=true;held.origin=offset;held.desired=offset;target=null;momentum=0;
       // Capture the stable stage, not a card that can wrap to the other side.
       stage.setPointerCapture(held.id);stage.classList.add('is-dragging');start();
     }
     const down=e=>{
       if(e.button!==0||!e.isPrimary||held)return;
       const controlledVideo=e.target.closest('video[controls]');if(controlledVideo&&e.clientY>controlledVideo.getBoundingClientRect().bottom-46)return;
-      const bounds=stage.getBoundingClientRect();momentum=0;
-      held={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,time:performance.now(),scale:bounds.width/stage.clientWidth,moved:false,dragging:false,velocity:0};
-      // Movement engages immediately; a stationary hold also shows the grabbed state.
-      holdTimer=setTimeout(beginDrag,90);
+      const bounds=stage.getBoundingClientRect();momentum=0;target=null;ignoreUntil=0;
+      held={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,time:performance.now(),scale:bounds.width/stage.clientWidth,threshold:e.pointerType==='touch'?12:8,moved:false,dragging:false,velocity:0};
+      // A stationary press remains a click; capture only after intentional movement.
     };
     const move=e=>{
       if(!held||held.id!==e.pointerId)return;
       const now=performance.now(),distance=Math.hypot(e.clientX-held.x,e.clientY-held.y);
-      if(distance>3){held.moved=true;beginDrag();}
+      if(distance>held.threshold){held.moved=true;if(Math.abs(e.clientX-held.x)>=Math.abs(e.clientY-held.y))beginDrag();}
       if(held.dragging){
         const elapsed=Math.max(4,now-held.time),speed=-(e.clientX-held.lastX)/held.scale/elapsed;
         held.velocity=held.velocity*.55+Math.max(-1.5,Math.min(1.5,speed))*.45;
@@ -306,7 +305,7 @@
     };
     const up=e=>{
       if(!held||held.id!==e.pointerId)return;
-      clearTimeout(holdTimer);const released=held;held=null;
+      const released=held;held=null;
       if(released.dragging){
         offset=released.desired;
         momentum=e.type==='pointerup'&&released.moved&&performance.now()-released.time<80&&!reduceMotion.matches?released.velocity:0;
@@ -319,7 +318,7 @@
     const cancelDrag=()=>{momentum=0;if(held)up({pointerId:held.id,type:'pointercancel'});};
     function expand(){
       if(expanded||disposed)return;
-      clearTimeout(holdTimer);held=null;momentum=0;stage.classList.remove('is-dragging');
+      held=null;momentum=0;stage.classList.remove('is-dragging');
       const index=activeIndex;
       returnState={index,relative:(offset-centers[index])/stage.clientHeight,nodes:[stage,controls,playButton].map(node=>{const slot=document.createComment('gallery return position');node.replaceWith(slot);return {node,slot};})};
       expanded=true;dialog.classList.remove('full-media');dialog.classList.add('gallery-modal');
@@ -330,7 +329,7 @@
     }
     function restore(){
       if(!expanded)return;
-      clearTimeout(holdTimer);held=null;momentum=0;stage.classList.remove('is-dragging');
+      held=null;momentum=0;stage.classList.remove('is-dragging');
       const saved=returnState;expanded=false;returnState=null;
       saved.nodes.forEach(({node,slot})=>slot.replaceWith(node));
       slides.forEach(s=>{if(s.item.type==='video')s.media.controls=false;s.shouldPlay=null;});
@@ -345,7 +344,7 @@
     playButton.setAttribute('aria-label',paused?'Play gallery motion and videos':'Pause gallery motion and videos');
     if(paused)playButton.textContent='▶';
     layout();updateCount();start();
-    return {go,expand,restore,destroy(){restore();disposed=true;clearTimeout(holdTimer);held=null;cancelAnimationFrame(frame);window.removeEventListener('resize',layout);window.removeEventListener('pointermove',move);window.removeEventListener('blur',cancelDrag);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);dialog.removeEventListener('close',resume);document.removeEventListener('visibilitychange',visibility);slides.forEach(s=>{if(s.item.type==='video')s.media.pause();});}};
+    return {go,expand,restore,destroy(){restore();disposed=true;held=null;cancelAnimationFrame(frame);window.removeEventListener('resize',layout);window.removeEventListener('pointermove',move);window.removeEventListener('blur',cancelDrag);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);dialog.removeEventListener('close',resume);document.removeEventListener('visibilitychange',visibility);slides.forEach(s=>{if(s.item.type==='video')s.media.pause();});}};
   }
   function selectMedia(index){if(gallery)gallery.go(index);}
   function openFull(){
