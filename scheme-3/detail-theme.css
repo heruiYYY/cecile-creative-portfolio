@@ -1,3 +1,4 @@
+@font-face{font-family:InterHero;src:url("fonts/inter-18pt-medium-latin.woff2") format("woff2");font-weight:500;font-display:swap}
 /* Shared day/night palette with the homepage. */
 :root{--detail-bg:#fff;--detail-ink:#171717;--detail-copy:#737370;--detail-line:#17171730;--detail-control:#00000004;--detail-modal:#fff;background:var(--detail-bg);color:var(--detail-ink);--ink:var(--detail-ink)}
 :root[data-theme="dark"]{--detail-bg:#151515;--detail-ink:#e6e6e3;--detail-copy:#a9a9a5;--detail-line:#ffffff45;--detail-control:#ffffff06;--detail-modal:#151515}
@@ -16,7 +17,7 @@ body.project-view{overflow-x:hidden;overflow-y:auto}
 .project-view .close-project{top:0}
 .project-scene{display:flex;flex-direction:column;height:auto;min-height:100svh;padding:clamp(70px,8svh,100px) 0 32px;overflow:visible}
 .project-intro{width:min(1000px,calc(100% - 2 * var(--edge)));margin:0 auto 34px;text-align:center}
-.project-intro .project-title{position:static;max-width:none;font-family:Swizzy,Arial,'PingFang SC',sans-serif;font-size:clamp(44px,6vw,100px);font-weight:400;line-height:1.02;letter-spacing:-.055em;color:var(--detail-ink);text-shadow:none;overflow-wrap:normal;text-wrap:balance}
+.project-intro .project-title{position:static;max-width:none;font-family:InterHero,Arial,sans-serif;font-size:clamp(44px,6vw,100px);font-weight:500;line-height:1.02;letter-spacing:-.055em;color:var(--detail-ink);text-shadow:none;overflow-wrap:normal;text-wrap:balance}
 .project-intro .project-copy{position:static;width:min(640px,100%);margin:20px auto 0;font-size:clamp(13px,1.05vw,17px);line-height:1.8;color:var(--detail-copy);text-wrap:pretty}
 .project-intro .project-copy p{margin:0 0 14px}
 .project-scene>.media-stage{position:relative;inset:auto;flex:none;width:91%;height:45svh;margin:0 auto}
