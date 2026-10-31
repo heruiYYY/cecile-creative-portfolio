@@ -41,8 +41,12 @@
 .experience-row:before{content:'';position:absolute;left:2px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--ink)}
 .experience-row:last-child{padding-bottom:0;border:0}
 .experience-dates{font:11px/1.6 var(--mono);letter-spacing:.08em;color:var(--muted);margin:0 0 14px}
-.experience-topline{display:block;list-style:none;cursor:pointer;font-size:clamp(17px,1.6vw,25px);line-height:1.5}
+.experience-topline{position:relative;display:block;padding-right:64px;list-style:none;cursor:pointer;font-size:clamp(17px,1.6vw,25px);line-height:1.5}
 .experience-topline::-webkit-details-marker{display:none}
+.experience-toggle-hint{position:absolute;right:0;top:.35em;font-size:11px;font-weight:400;letter-spacing:0;color:var(--muted);white-space:nowrap}
+.experience-collapse,.experience-disclosure[open] .experience-expand{display:none}
+.experience-disclosure[open] .experience-collapse{display:inline}
+.experience-topline:hover .experience-toggle-hint{color:var(--ink)}
 .experience-topline:focus-visible{outline:2px solid var(--muted);outline-offset:6px;border-radius:2px}
 .experience-topline h3,.experience-topline .experience-role{font-family:InterHero,Arial,'PingFang SC',sans-serif;font-size:1em;font-weight:500;line-height:1.5;letter-spacing:-.025em;margin:0;color:var(--ink);display:inline}
 .experience-topline .experience-role{font-size:.78em;color:var(--muted);margin:0 0 0 .35em;white-space:nowrap}
